@@ -6,6 +6,7 @@ import java.util.List;
 import com.involves.selecao.service.BuscaAlertasService;
 import com.involves.selecao.service.ProcessadorAlerta;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,12 +23,14 @@ public class AlertaController {
 	@Autowired
 	private ProcessadorAlerta processador;
 	
-	@GetMapping
+	@GetMapping()
+	@CrossOrigin(origins = "http://localhost:3000")
     public List<Alerta> alertas() {
 		return buscaAlertasService.buscarTodos();
     }
 	
 	@GetMapping("/processar")
+	@CrossOrigin(origins = "http://localhost:3000")
     public void processar() {
 		try {
 			processador.processa();

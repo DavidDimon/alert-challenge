@@ -1,2 +1,1 @@
-# alert-challenge
-Alert Challenge
+# Alert Challenge

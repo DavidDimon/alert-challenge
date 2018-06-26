@@ -1,11 +1,13 @@
-package com.involves.selecao;
+package com.involves.selecao.service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 
+import com.involves.selecao.utils.ConvertJson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,22 +24,10 @@ public class ProcessadorAlerta {
     private AlertaGateway gateway;
 
     public void processa() throws IOException {
-        URL url = new URL("http://selecao-involves.agilepromoter.com/pesquisas");
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
-        con.setRequestMethod("GET");
-
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(con.getInputStream(), "UTF-8"));
-        String inputLine;
-        StringBuffer content = new StringBuffer();
-
-        while ((inputLine = in.readLine()) != null) {
-            content.append(inputLine);
-        }
-        in.close();
+        String content = ConvertJson.convertJsonToString("http://selecao-involves.agilepromoter.com/pesquisas");
 
         Gson gson = new Gson();
-        Pesquisa[] pesquisas = gson.fromJson(content.toString(), Pesquisa[].class);
+        Pesquisa[] pesquisas = gson.fromJson(content, Pesquisa[].class);
         for (int i = 0; i < pesquisas.length; i++) {
             for (int j = 0; j < pesquisas[i].getRespostas().size(); j++) {
                 Resposta resposta = pesquisas[i].getRespostas().get(j);
@@ -53,6 +43,26 @@ public class ProcessadorAlerta {
             }
         }
     }
+
+    private String readUrl(String urlString) throws Exception {
+        BufferedReader reader = null;
+        try {
+            URL url = new URL(urlString);
+            reader = new BufferedReader(new InputStreamReader(url.openStream()));
+            StringBuffer buffer = new StringBuffer();
+            int read;
+            char[] chars = new char[1024];
+            while ((read = reader.read(chars)) != -1)
+                buffer.append(chars, 0, read);
+
+            return buffer.toString();
+        } finally {
+            if (reader != null)
+                reader.close();
+        }
+
+    }
+
 
     public Alerta getAlertaSituacao(Pesquisa pesquisa, Resposta resposta) {
         if (resposta == null || resposta.getResposta() == null
@@ -101,7 +111,7 @@ public class ProcessadorAlerta {
     public Alerta getAlertaParticipacao(Pesquisa pesquisa, Resposta resposta) {
         int participacaoColetada = Integer.parseInt(resposta.getResposta());
         int participacaoEstipulada = Integer.parseInt(pesquisa.getParticipacao_estipulada());
-        int margem = participacaoColetada - Integer.parseInt(resposta.getResposta());
+        int margem = participacaoColetada - participacaoEstipulada;
 
         Alerta alerta = new Alerta();
         alerta.setProduto(pesquisa.getProduto());

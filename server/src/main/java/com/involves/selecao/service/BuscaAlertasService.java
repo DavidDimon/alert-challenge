@@ -1,4 +1,4 @@
-package com.involves.selecao;
+package com.involves.selecao.service;
 
 import java.util.List;
 

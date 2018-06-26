@@ -3,6 +3,8 @@ package com.involves.selecao;
 import java.io.IOException;
 import java.util.List;
 
+import com.involves.selecao.service.BuscaAlertasService;
+import com.involves.selecao.service.ProcessadorAlerta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

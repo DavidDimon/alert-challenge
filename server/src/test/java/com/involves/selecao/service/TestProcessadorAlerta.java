@@ -2,7 +2,6 @@ package com.involves.selecao.service;
 
 import com.involves.selecao.alerta.Pesquisa;
 import com.involves.selecao.alerta.Resposta;
-import com.involves.selecao.ProcessadorAlerta;
 import org.junit.Assert;
 import org.junit.Test;
 

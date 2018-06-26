@@ -54,7 +54,11 @@ public class ProcessadorAlerta {
             Alerta alerta = new Alerta();
             alerta.setPontoDeVenda(pesquisa.getPonto_de_venda());
             alerta.setDescricao("Ruptura detectada!");
-            alerta.setProduto(pesquisa.getProduto());
+            if (pesquisa.getProduto() != null) {
+                alerta.setProduto(pesquisa.getProduto());
+            } else {
+                alerta.setProduto(pesquisa.getCategoria());
+            }
             alerta.setFlTipo(1);
             return alerta;
         }
@@ -71,9 +75,13 @@ public class ProcessadorAlerta {
         int margem = precoEstipulado - Integer.parseInt(resposta.getResposta());
 
         Alerta alerta = new Alerta();
-        alerta.setProduto(pesquisa.getProduto());
+        if (pesquisa.getProduto() != null) {
+            alerta.setProduto(pesquisa.getProduto());
+        } else {
+            alerta.setProduto(pesquisa.getCategoria());
+        }
         alerta.setPontoDeVenda(pesquisa.getPonto_de_venda());
-        alerta.setMargem(margem);
+        alerta.setMargem(Math.abs(margem));
 
         if (precoColetado > precoEstipulado) {
             alerta.setDescricao("Preço acima do estipulado!");
@@ -94,9 +102,13 @@ public class ProcessadorAlerta {
         int margem = participacaoColetada - participacaoEstipulada;
 
         Alerta alerta = new Alerta();
-        alerta.setProduto(pesquisa.getProduto());
+        if (pesquisa.getProduto() != null) {
+            alerta.setProduto(pesquisa.getProduto());
+        } else {
+            alerta.setProduto(pesquisa.getCategoria());
+        }
         alerta.setPontoDeVenda(pesquisa.getPonto_de_venda());
-        alerta.setMargem(margem);
+        alerta.setMargem(Math.abs(margem));
 
         if (participacaoColetada > participacaoEstipulada) {
             alerta.setDescricao("Participação acima da estipulada!");

@@ -7,25 +7,46 @@ const fetchAlerts = () => {
     ).then(data => {return data});
 }
 
-
 const refreshAlerts = ({setAlerts}) => () => {
     fetchAlerts().then(data => {
         setAlerts(data);
-        console.log(data);
     });
+}
+
+const searchAlerts = ({setAlerts,alerts,oldAlerts}) => (event) => {
+    let result = oldAlerts;
+    let searchParam = event;
+    if (event && !isNaN(event)){
+        result = result.filter(data => data.flTipo == event);
+        searchParam = '';
+    }
+    if (searchParam) {
+      result = result.filter(data => data.pontoDeVenda
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .includes(searchParam
+              .toLowerCase()
+              .normalize("NFD")
+              .replace(/[\u0300-\u036f]/g, "")));
+    }
+    setAlerts(result);
+    if (!event) {
+        setAlerts(oldAlerts);
+    }
 }
 
 const enhance = compose(
   withState("alerts", "setAlerts", []),
-  withHandlers({ refreshAlerts }),
+  withState("oldAlerts", "setOldAlerts", []),
+  withHandlers({ refreshAlerts,searchAlerts }),
   lifecycle({
       componentWillMount(){
-          const {alerts,setAlerts} = this.props;
-            console.log("test");
+          const {alerts,setAlerts,setOldAlerts} = this.props;
             fetchAlerts().then(data => {
                 setAlerts(data);
-            });
-          
+                setOldAlerts(data);
+        });
       }
   })
 );

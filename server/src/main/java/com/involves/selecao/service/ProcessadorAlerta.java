@@ -31,11 +31,11 @@ public class ProcessadorAlerta {
         for (int i = 0; i < pesquisas.length; i++) {
             for (int j = 0; j < pesquisas[i].getRespostas().size(); j++) {
                 Resposta resposta = pesquisas[i].getRespostas().get(j);
-                if (resposta.getPergunta().equals("Qual a situação do produto?")) {
+                if (resposta.getPergunta().toLowerCase().equals("qual a situação do produto?")) {
                     gateway.salvar(this.getAlertaSituacao(pesquisas[i], resposta));
-                } else if (resposta.getPergunta().equals("Qual o preço do produto?")) {
+                } else if (resposta.getPergunta().toLowerCase().equals("qual o preço do produto?")) {
                     gateway.salvar(this.getAlertaPreco(pesquisas[i], resposta));
-                } else if (resposta.getPergunta().equals("%Share")) {
+                } else if (resposta.getPergunta().toLowerCase().equals("%share")) {
                     gateway.salvar(this.getAlertaParticipacao(pesquisas[i], resposta));
                 } else {
                     System.out.println("Alerta ainda não implementado!");
@@ -45,12 +45,11 @@ public class ProcessadorAlerta {
     }
 
     public Alerta getAlertaSituacao(Pesquisa pesquisa, Resposta resposta) {
-        if (resposta == null || resposta.getResposta() == null
-                && pesquisa == null) {
+        if (pesquisa == null || resposta == null || resposta.getResposta() == null) {
             return null;
         }
 
-        if (resposta.getResposta().equals("Produto ausente na gondola")) {
+        if (resposta.getResposta().toLowerCase().equals("produto ausente na gondola")) {
             Alerta alerta = new Alerta();
             alerta.setPontoDeVenda(pesquisa.getPonto_de_venda());
             alerta.setDescricao("Ruptura detectada!");
@@ -81,7 +80,7 @@ public class ProcessadorAlerta {
             alerta.setProduto(pesquisa.getCategoria());
         }
         alerta.setPontoDeVenda(pesquisa.getPonto_de_venda());
-        alerta.setMargem(Math.abs(margem));
+        alerta.setMargem(margem);
 
         if (precoColetado > precoEstipulado) {
             alerta.setDescricao("Preço acima do estipulado!");
@@ -97,9 +96,13 @@ public class ProcessadorAlerta {
     }
 
     public Alerta getAlertaParticipacao(Pesquisa pesquisa, Resposta resposta) {
+        if (pesquisa == null || resposta == null || resposta.getResposta() == null) {
+            return null;
+        }
+
         int participacaoColetada = Integer.parseInt(resposta.getResposta());
         int participacaoEstipulada = Integer.parseInt(pesquisa.getParticipacao_estipulada());
-        int margem = participacaoColetada - participacaoEstipulada;
+        int margem =  participacaoEstipulada - participacaoColetada;
 
         Alerta alerta = new Alerta();
         if (pesquisa.getProduto() != null) {
@@ -108,7 +111,7 @@ public class ProcessadorAlerta {
             alerta.setProduto(pesquisa.getCategoria());
         }
         alerta.setPontoDeVenda(pesquisa.getPonto_de_venda());
-        alerta.setMargem(Math.abs(margem));
+        alerta.setMargem(margem);
 
         if (participacaoColetada > participacaoEstipulada) {
             alerta.setDescricao("Participação acima da estipulada!");

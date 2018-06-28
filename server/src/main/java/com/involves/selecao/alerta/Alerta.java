@@ -1,6 +1,7 @@
 package com.involves.selecao.alerta;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class Alerta {
 
@@ -44,4 +45,16 @@ public class Alerta {
     public LocalDate getDataResposta() { return dataResposta; }
     public void setDataResposta(LocalDate dataResposta) { this.dataResposta = dataResposta; }
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Alerta alerta = (Alerta) o;
+		return Objects.equals(pontoDeVenda, alerta.pontoDeVenda) &&
+				Objects.equals(descricao, alerta.descricao) &&
+				Objects.equals(produto, alerta.produto) &&
+				Objects.equals(flTipo, alerta.flTipo) &&
+				Objects.equals(margem, alerta.margem) &&
+				Objects.equals(dataResposta, alerta.dataResposta);
+	}
 }
